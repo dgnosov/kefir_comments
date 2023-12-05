@@ -1,10 +1,22 @@
-import React from "react";
-import "./App.css";
-import getAuthorsRequest from "./api/authors/getAuthorsRequest";
-import getCommentsRequest from "./api/comments/getCommentsRequest";
+import {QueryClient, QueryClientProvider} from "react-query";
+import Layout from "./layout/Layout";
+
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            refetchOnWindowFocus: false,
+        },
+    },
+});
 
 function App() {
-    return <div className="App"></div>;
+    return (
+        <QueryClientProvider client={queryClient}>
+            <div className="App">
+                <Layout />
+            </div>
+        </QueryClientProvider>
+    );
 }
 
 export default App;
