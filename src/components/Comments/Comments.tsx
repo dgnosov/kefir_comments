@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from "react";
-import Comment from "./Comment/Comment";
 import CommentsHeader from "./CommentsHeader/CommentsHeader";
-import getAuthorsRequest from "src/api/authors/getAuthorsRequest";
 import {useQuery} from "react-query";
 import {IAuthors, getAuthors} from "src/services/Authors";
 import {getComments} from "src/services/Comments";
-import getCommentsRequest from "src/api/comments/getCommentsRequest";
+import traverseTree from "src/lib/traverseTree";
+
 type Props = {};
 
 const Comments: React.FC<Props> = ({}) => {
@@ -30,8 +29,19 @@ const Comments: React.FC<Props> = ({}) => {
     }, [authorsData]);
 
     useEffect(() => {
+        // Если не получим какие-либо данные, выходим
         if (!commentsData) return;
-        setComments(commentsData);
+
+        const arrWithReplies = commentsData.data.map((item: any) => {
+            return {
+                ...item,
+                replies: null,
+            };
+        });
+
+        const formatedComments = traverseTree(arrWithReplies);
+
+        setComments(formatedComments);
     }, [commentsData]);
 
     return (
@@ -40,16 +50,6 @@ const Comments: React.FC<Props> = ({}) => {
                 totalComments={totalComments}
                 totalLikes={totalLikes}
             />
-            {authors?.status !== 200 ? (
-                <span>Что-то пошло не так</span>
-            ) : (
-                authors.data.map((author) => (
-                    <div>
-                        <span>{author.id}</span>
-                        <span>{author.name}</span>
-                    </div>
-                ))
-            )}
         </div>
     );
 };
