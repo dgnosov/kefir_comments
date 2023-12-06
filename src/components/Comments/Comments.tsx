@@ -11,35 +11,53 @@ import styles from "./Comments.module.scss";
 
 type Props = {};
 
+const enum ErrorMessage {
+    error = "Network Error",
+    _404 = "Request failed with status code 404",
+}
+
 const Comments: React.FC<Props> = ({}) => {
     const {data: authorsData} = useQuery({
         queryFn: getAuthors,
         queryKey: ["authors"],
+        onSuccess: (success) =>
+            setSuccessAuthor(
+                ![ErrorMessage.error, ErrorMessage._404].includes(success),
+            ),
     });
 
     const {
         data: commentsData,
         refetch,
-        isFetching,
+        isLoading,
+        isSuccess,
     } = useQuery({
         queryFn: () => getComments(page),
         queryKey: ["comments"],
+        onSuccess: (success) =>
+            setSuccessComments(
+                ![ErrorMessage.error, ErrorMessage._404].includes(success),
+            ),
     });
 
-    useEffect(() => {
-        console.log("isFetching", isFetching);
-    }, [isFetching]);
-
     const [page, setPage] = useState<number>(1);
+    const [successComments, setSuccessComments] = useState<boolean>();
+    const [successAuthor, setSuccessAuthor] = useState<boolean>();
     const [totalPages, setTotalPages] = useState<number>(0);
     const [totalComments, setTotalComments] = useState<number>(0);
     const [totalLikes, setTotalLikes] = useState<number>(0);
     const [comments, setComments] = useState<any>([]);
     const [authors, setAuthors] = useState<any[]>([]);
+    const [formatedComments, setFormatedComments] = useState<any[]>([]);
 
     const loadMoreHandler = () => {
         refetch();
+        setPage((prev) => prev + 1);
     };
+
+    useEffect(() => {
+        console.log(successComments);
+    }, [successComments]);
 
     useEffect(() => {
         if (!authorsData) return;
@@ -47,18 +65,20 @@ const Comments: React.FC<Props> = ({}) => {
     }, [authorsData]);
 
     useEffect(() => {
-        if (!commentsData) return;
+        if (!commentsData || !commentsData.pagination) return;
+
+        setComments(commentsData.data);
         // Create state with total number of pages
         setTotalPages(commentsData.pagination.total_pages);
+    }, [commentsData]);
 
+    useEffect(() => {
+        if (!comments || !authors) return;
         // Описать
-        const arrWithReplies = commentsData.data.map((comment) => {
+        const commentsWithReplies = comments.map((comment: any) => {
             const author = authors.find(
                 (author) => author.id === comment.author,
             );
-
-            console.log("autrhor", author?.name);
-
             return {
                 ...comment,
                 replies: null,
@@ -67,22 +87,27 @@ const Comments: React.FC<Props> = ({}) => {
             };
         });
 
-        const formatedComments = traverseTree(arrWithReplies);
-        setComments([...comments, ...formatedComments]);
+        const formatedCommentsTest = traverseTree(commentsWithReplies);
+        setFormatedComments([...formatedComments, ...formatedCommentsTest]);
+    }, [comments, authors]);
 
-        // After load comments we need to set +1 count page
-        setPage((prev) => prev + 1);
-    }, [commentsData]);
+    if (isLoading) {
+        return <span>LOADING</span>;
+    }
+
+    // if(!successAuthor || !successComments){
+    //     return
+    // }
 
     return (
         <div className={styles.comments}>
+            {totalPages} {page}
             <CommentsHeader
                 totalComments={totalComments}
                 totalLikes={totalLikes}
             />
-            {renderComments(comments)}
-
-            {totalPages < page ? (
+            {renderComments(formatedComments)}
+            {totalPages === page ? (
                 <span>Все сообщения загружены</span>
             ) : (
                 <button onClick={() => loadMoreHandler()}>Загрузить еще</button>

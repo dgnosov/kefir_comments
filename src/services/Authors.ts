@@ -11,7 +11,7 @@ export interface IAuthors {
     status: number;
 }
 
-export async function getAuthors(): Promise<IAuthors> {
+export async function getAuthors(): Promise<IAuthors | any> {
     return axios
         .get(`api/authors`, {})
         .then((response) => {
@@ -21,7 +21,7 @@ export async function getAuthors(): Promise<IAuthors> {
             };
         })
         .catch((err) => {
-            console.error("There is an error: ==> getAuthors:", err.response);
-            return err.response;
+            console.error("There is an error: ==> getAuthors:", err.message);
+            return err.message;
         });
 }

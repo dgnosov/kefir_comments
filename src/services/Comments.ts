@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, {AxiosError} from "axios";
 
 export interface IComment {
     replies?: IComment[] | null;
@@ -21,9 +21,12 @@ export interface IComments {
         total_pages: number;
     };
     status: number;
+    error?: string;
 }
 
-export async function getComments(page_number: number): Promise<IComments> {
+export async function getComments(
+    page_number: number,
+): Promise<IComments | any> {
     return axios
         .get(`api/comments`, {params: {page: page_number}})
         .then((response) => {
@@ -34,7 +37,7 @@ export async function getComments(page_number: number): Promise<IComments> {
             };
         })
         .catch((err) => {
-            console.error("There is an error: ==> getComments:", err.response);
-            return err.response;
+            console.error("There is an error: ==> getComments:", err.message);
+            return err.message;
         });
 }

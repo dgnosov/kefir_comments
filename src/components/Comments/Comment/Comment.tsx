@@ -10,7 +10,7 @@ type Props = {
 
 const Comment: React.FC<Props> = ({comment, isChild, index}) => {
     return (
-        <div className={styles.comment} style={{marginLeft: isChild ? 10 : 0}}>
+        <div className={styles.comment} style={{marginLeft: isChild ? 40 : 0}}>
             <div className={styles.comment__icon}>
                 <img src={comment.authro_icon} alt={comment.author_name} />
             </div>
