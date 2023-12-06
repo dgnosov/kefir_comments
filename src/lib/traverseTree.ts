@@ -22,7 +22,7 @@ const traverseTree = (arr: IComment[]): IComment[] => {
     for (i = 0; i < arr.length; i += 1) {
         node = arr[i];
         if (node.parent) {
-            arr[map[node.parent]].replies.push(node as never);
+            arr[map[node.parent]].replies?.push(node);
         } else {
             res.push(node);
         }

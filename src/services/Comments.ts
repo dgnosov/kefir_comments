@@ -1,13 +1,16 @@
 import axios from "axios";
 
 export interface IComment {
-    replies: never[];
+    replies?: IComment[] | null;
     id: number;
     author: number;
     created: string;
     likes: number;
     parent: number | null;
     text: string;
+
+    author_name?: string;
+    authro_icon?: string;
 }
 
 export interface IComments {
@@ -20,9 +23,9 @@ export interface IComments {
     status: number;
 }
 
-export async function getComments(param: number): Promise<IComments> {
+export async function getComments(page_number: number): Promise<IComments> {
     return axios
-        .get(`api/comments`, {params: {page: param}})
+        .get(`api/comments`, {params: {page: page_number}})
         .then((response) => {
             return {
                 data: response.data.data,
