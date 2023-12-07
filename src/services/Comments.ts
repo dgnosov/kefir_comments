@@ -8,7 +8,7 @@ export interface IComment {
     likes: number;
     parent: number | null;
     text: string;
-
+    liked?: boolean;
     author_name?: string;
     authro_icon?: string;
 }

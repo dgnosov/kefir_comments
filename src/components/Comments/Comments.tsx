@@ -174,22 +174,24 @@ const Comments: React.FC<Props> = ({}) => {
     }
 
     return (
-        <div className={styles.comments}>
+        <section className={styles.comments}>
             <CommentsHeader
                 totalComments={totalComments}
                 totalLikes={totalLikes}
             />
-            {renderComments(formatedComments)}
-            {totalPages === currentPage ? (
-                <span>Все сообщения загружены</span>
-            ) : dataloader ? (
-                <span>loading data...</span>
-            ) : (
-                <button onClick={() => loadMoreHandler()}>
-                    {error ? "Ошибка" : "Загрузить еще"}
-                </button>
-            )}
-        </div>
+            <div className={styles.comments__block}>
+                {renderComments(formatedComments)}
+                {totalPages === currentPage ? (
+                    <span>Все сообщения загружены</span>
+                ) : dataloader ? (
+                    <span>loading data...</span>
+                ) : (
+                    <button onClick={() => loadMoreHandler()}>
+                        {error ? "Ошибка" : "Загрузить еще"}
+                    </button>
+                )}
+            </div>
+        </section>
     );
 };
 export default Comments;

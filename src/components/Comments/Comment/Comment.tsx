@@ -5,6 +5,8 @@ import moment from "moment";
 import {useAtom} from "jotai";
 import {comment_id} from "../Comments";
 import {getNoun} from "src/lib/getNoun";
+import {ReactComponent as LikeStroke} from "../../../assets/icons/like_stroke.svg";
+import {ReactComponent as LikeFilled} from "../../../assets/icons/like_filled.svg";
 
 type Props = {
     comment: IComment;
@@ -41,7 +43,12 @@ const Comment: React.FC<Props> = ({comment, isChild}) => {
     };
 
     return (
-        <div className={styles.comment} style={{marginLeft: isChild ? 40 : 0}}>
+        <div
+            className={[
+                styles.comment,
+                isChild ? styles.comment__offset : "",
+            ].join(" ")}
+        >
             <div className={styles.comment__icon}>
                 <img src={comment.authro_icon} alt={comment.author_name} />
             </div>
@@ -49,10 +56,10 @@ const Comment: React.FC<Props> = ({comment, isChild}) => {
                 <div className={styles.comment__block}>
                     <div className={styles.comment__block_info}>
                         <div className={styles.comment__block_info_nickname}>
-                            {comment.author_name}
+                            <span>{comment.author_name}</span>
                         </div>
                         <div className={styles.comment__block_info_created}>
-                            <p>{formatTimePrefixes()}</p>
+                            <span>{formatTimePrefixes()}</span>
                         </div>
                     </div>
                     <div className={styles.comment__block_likes}>
@@ -60,14 +67,16 @@ const Comment: React.FC<Props> = ({comment, isChild}) => {
                             className={styles.comment__block_likes_icon}
                             onClick={() => onLike(comment.id)}
                         >
-                            Likes
+                            {comment.liked ? <LikeFilled /> : <LikeStroke />}
                         </div>
                         <div className={styles.comment__block_likes_number}>
-                            {comment.likes}
+                            <span>{comment.likes}</span>
                         </div>
                     </div>
                 </div>
-                <div className={styles.comment__test}>{comment.text}</div>
+                <div className={styles.comment__text}>
+                    <span>{comment.text}</span>
+                </div>
             </div>
         </div>
     );

@@ -5,9 +5,9 @@ type Props = {};
 
 const Layout: React.FC<Props> = ({}) => {
     return (
-        <div className={styles.layout}>
+        <main className={styles.layout}>
             <Comments />
-        </div>
+        </main>
     );
 };
 export default Layout;

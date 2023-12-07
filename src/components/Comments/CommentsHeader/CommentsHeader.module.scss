@@ -1,5 +1,27 @@
+@import "../../../styles/colors.scss";
+
 .commentsHeader {
+    padding: 0 0 10px 0;
     display: flex;
     justify-content: space-between;
-    margin: 0 0 20px 0;
+    margin: 0 0 24px 0;
+    color: $color_white;
+    border-bottom: 0.2px solid $color_light_grey;
+    &__total {
+        font-family: Lato-Bold;
+    }
+
+    &__likes {
+        display: flex;
+        align-items: center;
+        span {
+            max-width: 50px;
+            display: inline-block;
+            margin: 0 0 0 8px;
+            word-wrap: break-word;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+    }
 }

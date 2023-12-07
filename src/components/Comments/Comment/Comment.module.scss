@@ -1,29 +1,57 @@
+@import "../../../styles/colors.scss";
+
 .comment {
     display: flex;
-    margin: 0 0 38px 0;
+    margin: 0 0 27px 0;
+    font-family: Lato-Regular;
+    &__offset {
+        margin: 0 0 27px 20px;
+    }
     &__icon {
         margin: 0 20px 0 0;
         img {
-            width: 68px;
-            height: 68px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
+            object-fit: cover;
         }
     }
     &__container {
         width: 100%;
         display: flex;
         flex-direction: column;
+        color: $color_white;
     }
     &__block {
         display: flex;
         justify-content: space-between;
-        &_likes {
-            display: flex;
-            &_icon {
-                padding: 5px;
-
-                cursor: pointer;
+        margin: 0 0 9.5px 0;
+        &_info_nickname {
+        }
+        &_info_created {
+            span {
+                color: $color_grey;
             }
         }
+        &_likes {
+            display: flex;
+            align-items: center;
+            &_icon {
+                margin: 0 8px 0 0;
+                cursor: pointer;
+            }
+            &_number {
+                max-width: 35px;
+                display: inline-block;
+                margin: 0 0 0 8px;
+                word-wrap: break-word;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+            }
+        }
+    }
+
+    &__text {
     }
 }
