@@ -4,6 +4,7 @@ import {subtractHours} from "src/lib/date";
 import moment from "moment";
 import {useAtom} from "jotai";
 import {comment_id} from "../Comments";
+import {getNoun} from "src/lib/getNoun";
 
 type Props = {
     comment: IComment;
@@ -11,12 +12,11 @@ type Props = {
     index: number;
 };
 
-const enum LimitHours {
-    limitHours = 4,
-}
+const limitHours = new Date().getHours() - new Date().getUTCHours();
+const oneHour = 1;
 
-const Comment: React.FC<Props> = ({comment, isChild, index}) => {
-    const [commentId, setCommentId] = useAtom(comment_id);
+const Comment: React.FC<Props> = ({comment, isChild}) => {
+    const [_, setCommentId] = useAtom(comment_id);
 
     const time_created = subtractHours(
         new Date(),
@@ -26,6 +26,19 @@ const Comment: React.FC<Props> = ({comment, isChild, index}) => {
     const created_date = moment(comment.created).format("DD.MM.YYYY, hh:mm:ss");
 
     const onLike = (comment_id: number) => setCommentId(comment_id);
+
+    const formatTimePrefixes = () => {
+        return time_created > limitHours
+            ? created_date
+            : time_created < oneHour
+            ? "менее часа назад"
+            : `${time_created} ${getNoun(
+                  time_created,
+                  "час",
+                  "часа",
+                  "часов",
+              )} назад`;
+    };
 
     return (
         <div className={styles.comment} style={{marginLeft: isChild ? 40 : 0}}>
@@ -39,11 +52,7 @@ const Comment: React.FC<Props> = ({comment, isChild, index}) => {
                             {comment.author_name}
                         </div>
                         <div className={styles.comment__block_info_created}>
-                            <p>
-                                {time_created > LimitHours.limitHours
-                                    ? created_date
-                                    : time_created}
-                            </p>
+                            <p>{formatTimePrefixes()}</p>
                         </div>
                     </div>
                     <div className={styles.comment__block_likes}>

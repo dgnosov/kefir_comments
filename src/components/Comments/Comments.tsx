@@ -34,6 +34,7 @@ const Comments: React.FC<Props> = ({}) => {
     const [authors, setAuthors] = useState<any[]>([]);
     const [formatedComments, setFormatedComments] = useState<any[]>([]);
     const [commentId, setCommentId] = useAtom(comment_id);
+    const [commentsRaw, setCommentsRaw] = useState<any[]>([]);
 
     const {data: authorsData} = useQuery({
         queryFn: getAuthors,
@@ -100,11 +101,11 @@ const Comments: React.FC<Props> = ({}) => {
         setCurrentPage(commentsData.pagination.page);
     }, [commentsData]);
 
+    // Описать
     useEffect(() => {
         if (!comments || !authors) return;
 
-        // Описать
-        const commentsWithReplies = comments.map((comment: any) => {
+        const commentsWithAuthorsRaw = comments.map((comment: any) => {
             const author = authors.find(
                 (author) => author.id === comment.author,
             );
@@ -117,25 +118,36 @@ const Comments: React.FC<Props> = ({}) => {
             };
         });
 
-        const formatedCommentsTest = traverseTree(commentsWithReplies);
-        const sortedCommentsByCreated = [
-            ...formatedComments,
-            ...formatedCommentsTest,
-        ].sort((a, b) =>
-            new Date(a.created).toISOString() >
-            new Date(b.created).toISOString()
-                ? -1
-                : 1,
+        setCommentsRaw(
+            [...commentsRaw, ...commentsWithAuthorsRaw].sort((a, b) =>
+                new Date(a.created).toISOString() >
+                new Date(b.created).toISOString()
+                    ? -1
+                    : 1,
+            ),
         );
-
-        setFormatedComments(sortedCommentsByCreated);
     }, [comments, authors]);
+
+    useEffect(() => {
+        if (!commentsRaw) return;
+        const formatedCommentsWithReplies = traverseTree(commentsRaw);
+        setFormatedComments(formatedCommentsWithReplies);
+
+        const totalComments = commentsRaw.length;
+        setTotalComments(totalComments);
+
+        const totalLikes = commentsRaw
+            .map((like) => like.likes)
+            .reduce((acc, i) => acc + i, 0);
+
+        setTotalLikes(totalLikes);
+    }, [commentsRaw]);
 
     // Лайки - описать
     useEffect(() => {
         if (commentId === 0) return;
 
-        const newState = comments?.map((comment: any) => {
+        const newState = commentsRaw?.map((comment: any) => {
             if (comment.id === commentId) {
                 if (!comment.liked) {
                     return {
@@ -154,7 +166,7 @@ const Comments: React.FC<Props> = ({}) => {
         });
 
         setCommentId(0);
-        setComments(newState);
+        setCommentsRaw(newState);
     }, [commentId]);
 
     if (isLoading) {
