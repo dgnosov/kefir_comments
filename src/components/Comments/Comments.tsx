@@ -26,11 +26,12 @@ const Comments: React.FC<Props> = ({}) => {
             ),
     });
 
+    const [page, setPage] = useState<number>(1);
+
     const {
         data: commentsData,
         refetch,
         isLoading,
-        isSuccess,
     } = useQuery({
         queryFn: () => getComments(page),
         queryKey: ["comments"],
@@ -40,9 +41,11 @@ const Comments: React.FC<Props> = ({}) => {
             ),
     });
 
-    const [page, setPage] = useState<number>(1);
     const [successComments, setSuccessComments] = useState<boolean>();
     const [successAuthor, setSuccessAuthor] = useState<boolean>();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [error, setError] = useState<boolean>();
+    const [dataloader, setDataLoader] = useState(false);
     const [totalPages, setTotalPages] = useState<number>(0);
     const [totalComments, setTotalComments] = useState<number>(0);
     const [totalLikes, setTotalLikes] = useState<number>(0);
@@ -51,13 +54,34 @@ const Comments: React.FC<Props> = ({}) => {
     const [formatedComments, setFormatedComments] = useState<any[]>([]);
 
     const loadMoreHandler = () => {
-        refetch();
+        setDataLoader(true);
         setPage((prev) => prev + 1);
     };
 
     useEffect(() => {
-        console.log(successComments);
-    }, [successComments]);
+        if (
+            typeof successComments === "undefined" ||
+            typeof successAuthor === "undefined"
+        )
+            return;
+        if (!successComments || !successAuthor) {
+            setError(true);
+            setDataLoader(false);
+        } else {
+            setError(false);
+            setDataLoader(false);
+        }
+    }, [successComments, successAuthor]);
+
+    useEffect(() => {
+        if (!error) return;
+        setPage((prev) => prev - 1);
+    }, [error]);
+
+    useEffect(() => {
+        if (page === 1) return;
+        refetch();
+    }, [page]);
 
     useEffect(() => {
         if (!authorsData) return;
@@ -70,15 +94,18 @@ const Comments: React.FC<Props> = ({}) => {
         setComments(commentsData.data);
         // Create state with total number of pages
         setTotalPages(commentsData.pagination.total_pages);
+        setCurrentPage(commentsData.pagination.page);
     }, [commentsData]);
 
     useEffect(() => {
         if (!comments || !authors) return;
+
         // Описать
         const commentsWithReplies = comments.map((comment: any) => {
             const author = authors.find(
                 (author) => author.id === comment.author,
             );
+
             return {
                 ...comment,
                 replies: null,
@@ -95,22 +122,21 @@ const Comments: React.FC<Props> = ({}) => {
         return <span>LOADING</span>;
     }
 
-    // if(!successAuthor || !successComments){
-    //     return
-    // }
-
     return (
         <div className={styles.comments}>
-            {totalPages} {page}
             <CommentsHeader
                 totalComments={totalComments}
                 totalLikes={totalLikes}
             />
             {renderComments(formatedComments)}
-            {totalPages === page ? (
+            {totalPages === currentPage ? (
                 <span>Все сообщения загружены</span>
+            ) : dataloader ? (
+                <span>loading data...</span>
             ) : (
-                <button onClick={() => loadMoreHandler()}>Загрузить еще</button>
+                <button onClick={() => loadMoreHandler()}>
+                    {error ? "Ошибка" : "Загрузить еще"}
+                </button>
             )}
         </div>
     );

@@ -9,6 +9,8 @@ type Props = {
 };
 
 const Comment: React.FC<Props> = ({comment, isChild, index}) => {
+    const a = subtractHours(new Date(comment.created), 0);
+
     return (
         <div className={styles.comment} style={{marginLeft: isChild ? 40 : 0}}>
             <div className={styles.comment__icon}>
@@ -22,7 +24,6 @@ const Comment: React.FC<Props> = ({comment, isChild, index}) => {
                         </div>
                         <div className={styles.comment__info_created}>
                             {comment.created}
-                            {/* {subtractHours(new Date(), comment.created)} */}
                         </div>
                     </div>
                     <div className={styles.comment__block_likes}>
