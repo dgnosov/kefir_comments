@@ -1,6 +1,7 @@
 import {IComment} from "src/services/Comments";
 import styles from "./Comment.module.scss";
 import {subtractHours} from "src/lib/date";
+import moment from "moment";
 
 type Props = {
     comment: IComment;
@@ -8,8 +9,17 @@ type Props = {
     index: number;
 };
 
+const enum LimitHours {
+    limitHours = 4,
+}
+
 const Comment: React.FC<Props> = ({comment, isChild, index}) => {
-    const a = subtractHours(new Date(comment.created), 0);
+    const time_created = subtractHours(
+        new Date(),
+        new Date(comment.created).getHours(),
+    ).getHours();
+
+    const created_date = moment(comment.created).format("DD.MM.YYYY, hh:mm:ss");
 
     return (
         <div className={styles.comment} style={{marginLeft: isChild ? 40 : 0}}>
@@ -23,7 +33,11 @@ const Comment: React.FC<Props> = ({comment, isChild, index}) => {
                             {comment.author_name}
                         </div>
                         <div className={styles.comment__info_created}>
-                            {comment.created}
+                            <p>
+                                {time_created > LimitHours.limitHours
+                                    ? created_date
+                                    : time_created}
+                            </p>
                         </div>
                     </div>
                     <div className={styles.comment__block_likes}>

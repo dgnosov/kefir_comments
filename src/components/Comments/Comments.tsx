@@ -115,7 +115,17 @@ const Comments: React.FC<Props> = ({}) => {
         });
 
         const formatedCommentsTest = traverseTree(commentsWithReplies);
-        setFormatedComments([...formatedComments, ...formatedCommentsTest]);
+        const sortedCommentsByCreated = [
+            ...formatedComments,
+            ...formatedCommentsTest,
+        ].sort((a, b) =>
+            new Date(a.created).toISOString() >
+            new Date(b.created).toISOString()
+                ? -1
+                : 1,
+        );
+
+        setFormatedComments(sortedCommentsByCreated);
     }, [comments, authors]);
 
     if (isLoading) {
