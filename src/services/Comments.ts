@@ -27,7 +27,6 @@ export interface IComments {
 export async function getComments(
     page_number: number,
 ): Promise<IComments | any> {
-    console.log("page_number", page_number);
     return axios
         .get(`api/comments`, {params: {page: page_number}})
         .then((response) => {

@@ -7,7 +7,11 @@ type Props = {
     isChild?: boolean;
 };
 
-const renderComments = (array: any, isChild?: boolean) => {
+const renderComments = (
+    array: any,
+    isChild?: boolean,
+    handleLikeClick?: any,
+) => {
     return array.map((comment: any, index: any) => (
         <>
             <Comment isChild={isChild} comment={comment} index={index} />

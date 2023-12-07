@@ -8,6 +8,10 @@ import recursive from "./Comment/RenderComment";
 import RenderComments from "./Comment/RenderComment";
 import renderComments from "./Comment/RenderComment";
 import styles from "./Comments.module.scss";
+import {atom, useAtom} from "jotai";
+
+// Here we will keep an id of liked comment
+export const comment_id = atom(0);
 
 type Props = {};
 
@@ -17,6 +21,20 @@ const enum ErrorMessage {
 }
 
 const Comments: React.FC<Props> = ({}) => {
+    const [page, setPage] = useState<number>(1);
+    const [successComments, setSuccessComments] = useState<boolean>();
+    const [successAuthor, setSuccessAuthor] = useState<boolean>();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [error, setError] = useState<boolean>();
+    const [dataloader, setDataLoader] = useState(false);
+    const [totalPages, setTotalPages] = useState<number>(0);
+    const [totalComments, setTotalComments] = useState<number>(0);
+    const [totalLikes, setTotalLikes] = useState<number>(0);
+    const [comments, setComments] = useState<any[]>([]);
+    const [authors, setAuthors] = useState<any[]>([]);
+    const [formatedComments, setFormatedComments] = useState<any[]>([]);
+    const [commentId, setCommentId] = useAtom(comment_id);
+
     const {data: authorsData} = useQuery({
         queryFn: getAuthors,
         queryKey: ["authors"],
@@ -25,8 +43,6 @@ const Comments: React.FC<Props> = ({}) => {
                 ![ErrorMessage.error, ErrorMessage._404].includes(success),
             ),
     });
-
-    const [page, setPage] = useState<number>(1);
 
     const {
         data: commentsData,
@@ -40,18 +56,6 @@ const Comments: React.FC<Props> = ({}) => {
                 ![ErrorMessage.error, ErrorMessage._404].includes(success),
             ),
     });
-
-    const [successComments, setSuccessComments] = useState<boolean>();
-    const [successAuthor, setSuccessAuthor] = useState<boolean>();
-    const [currentPage, setCurrentPage] = useState(1);
-    const [error, setError] = useState<boolean>();
-    const [dataloader, setDataLoader] = useState(false);
-    const [totalPages, setTotalPages] = useState<number>(0);
-    const [totalComments, setTotalComments] = useState<number>(0);
-    const [totalLikes, setTotalLikes] = useState<number>(0);
-    const [comments, setComments] = useState<any>([]);
-    const [authors, setAuthors] = useState<any[]>([]);
-    const [formatedComments, setFormatedComments] = useState<any[]>([]);
 
     const loadMoreHandler = () => {
         setDataLoader(true);
@@ -90,7 +94,6 @@ const Comments: React.FC<Props> = ({}) => {
 
     useEffect(() => {
         if (!commentsData || !commentsData.pagination) return;
-
         setComments(commentsData.data);
         // Create state with total number of pages
         setTotalPages(commentsData.pagination.total_pages);
@@ -127,6 +130,32 @@ const Comments: React.FC<Props> = ({}) => {
 
         setFormatedComments(sortedCommentsByCreated);
     }, [comments, authors]);
+
+    // Лайки - описать
+    useEffect(() => {
+        if (commentId === 0) return;
+
+        const newState = comments?.map((comment: any) => {
+            if (comment.id === commentId) {
+                if (!comment.liked) {
+                    return {
+                        ...comment,
+                        liked: true,
+                        likes: comment.likes + 1,
+                    };
+                }
+                return {
+                    ...comment,
+                    liked: false,
+                    likes: comment.likes - 1,
+                };
+            }
+            return comment;
+        });
+
+        setCommentId(0);
+        setComments(newState);
+    }, [commentId]);
 
     if (isLoading) {
         return <span>LOADING</span>;
