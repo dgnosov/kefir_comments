@@ -1,0 +1,24 @@
+@import "../../styles/colors.scss";
+
+.errorScreen {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    &__text {
+        span {
+            color: $color_white;
+        }
+    }
+    &__icon {
+        width: 150px;
+        svg {
+            path {
+                fill: $color_white;
+            }
+        }
+    }
+}

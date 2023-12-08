@@ -9,11 +9,17 @@ import styles from "./Comments.module.scss";
 import {atom, useAtom} from "jotai";
 import LoadMore from "src/ui/LoadMore/LoadMore";
 import MainLoader from "src/ui/MainLoader/MainLoader";
+import ErrorScreen from "src/ui/ErrorScreen/ErrorScreen";
 
 // Here we will keep an id of liked comment
 export const comment_id = atom(0);
 
 type Props = {};
+
+interface IErrorType {
+    msg: string | null;
+    queryTo: string | null;
+}
 
 const enum ErrorMessage {
     error = "Network Error",
@@ -26,6 +32,7 @@ const Comments: React.FC<Props> = ({}) => {
     const [successAuthors, setSuccessAuthors] = useState<boolean>();
     const [currentPage, setCurrentPage] = useState(1);
     const [error, setError] = useState<boolean>();
+    const [errorType, setErrorType] = useState<IErrorType>();
     const [dataLoader, setDataLoader] = useState(false);
     const [totalPages, setTotalPages] = useState<number>(0);
     const [totalComments, setTotalComments] = useState<number>(0);
@@ -39,10 +46,12 @@ const Comments: React.FC<Props> = ({}) => {
     const {data: authorsData} = useQuery({
         queryFn: getAuthors,
         queryKey: ["authors"],
-        onSuccess: (success) =>
+        onSuccess: (data) => (
+            data ? setErrorType({msg: data, queryTo: "authors"}) : null,
             setSuccessAuthors(
-                ![ErrorMessage.error, ErrorMessage._404].includes(success),
-            ),
+                ![ErrorMessage.error, ErrorMessage._404].includes(data),
+            )
+        ),
     });
 
     const {
@@ -52,10 +61,12 @@ const Comments: React.FC<Props> = ({}) => {
     } = useQuery({
         queryFn: () => getComments(page),
         queryKey: ["comments"],
-        onSuccess: (success) =>
+        onSuccess: (data) => (
+            data ? setErrorType({msg: data, queryTo: "comments"}) : null,
             setSuccessComments(
-                ![ErrorMessage.error, ErrorMessage._404].includes(success),
-            ),
+                ![ErrorMessage.error, ErrorMessage._404].includes(data),
+            )
+        ),
     });
 
     const loadMoreHandler = () => {
@@ -186,23 +197,29 @@ const Comments: React.FC<Props> = ({}) => {
 
     return (
         <>
-            <MainLoader start={isLoading} />;
-            <section className={styles.comments}>
-                <CommentsHeader
-                    totalComments={totalComments}
-                    totalLikes={totalLikes}
-                />
-                <div className={styles.comments__block}>
-                    {renderComments(formatedComments)}
-                    <LoadMore
-                        totalPages={totalPages}
-                        currentPage={currentPage}
-                        dataLoader={dataLoader}
-                        error={error}
-                        loadMoreHandler={loadMoreHandler}
-                    />
-                </div>
-            </section>
+            {errorType?.msg === ErrorMessage._404 ? (
+                <ErrorScreen msg={errorType?.msg} />
+            ) : (
+                <>
+                    <MainLoader start={isLoading} />
+                    <section className={styles.comments}>
+                        <CommentsHeader
+                            totalComments={totalComments}
+                            totalLikes={totalLikes}
+                        />
+                        <div className={styles.comments__block}>
+                            {renderComments(formatedComments)}
+                            <LoadMore
+                                totalPages={totalPages}
+                                currentPage={currentPage}
+                                dataLoader={dataLoader}
+                                error={error}
+                                loadMoreHandler={loadMoreHandler}
+                            />
+                        </div>
+                    </section>
+                </>
+            )}
         </>
     );
 };
