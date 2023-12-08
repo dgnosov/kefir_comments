@@ -17,8 +17,18 @@
         color: $color_white;
         border-radius: 4px;
         cursor: pointer;
+        transition: background 0.3s ease-in-out;
+        &:hover {
+            background: $color_light_grey;
+            transition: background 0.3s ease-in-out;
+        }
         &_error {
             background-color: $color_error;
+            transition: background 0.3s ease-in-out;
+            &:hover {
+                background: $color_light_grey;
+                transition: background 0.3s ease-in-out;
+            }
         }
         span {
             padding: 8px 62px;
