@@ -1,5 +1,9 @@
 @import "../../../styles/colors.scss";
 
+.comments__wrapper {
+    margin: 0 0 40px 0;
+}
+
 .comment {
     display: flex;
     margin: 0 0 27px 0;
@@ -26,8 +30,6 @@
         display: flex;
         justify-content: space-between;
         margin: 0 0 9.5px 0;
-        &_info_nickname {
-        }
         &_info_created {
             span {
                 color: $color_grey;
@@ -43,7 +45,7 @@
             &_number {
                 max-width: 35px;
                 display: inline-block;
-                margin: 0 0 0 8px;
+                margin: 0 0 6px 8px;
                 word-wrap: break-word;
                 text-overflow: ellipsis;
                 overflow: hidden;
@@ -53,5 +55,7 @@
     }
 
     &__text {
+        width: 100%;
+        overflow-wrap: anywhere;
     }
 }

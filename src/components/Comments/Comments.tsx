@@ -9,6 +9,7 @@ import RenderComments from "./Comment/RenderComment";
 import renderComments from "./Comment/RenderComment";
 import styles from "./Comments.module.scss";
 import {atom, useAtom} from "jotai";
+import LoadMore from "src/ui/LoadMore/LoadMore";
 
 // Here we will keep an id of liked comment
 export const comment_id = atom(0);
@@ -26,7 +27,7 @@ const Comments: React.FC<Props> = ({}) => {
     const [successAuthor, setSuccessAuthor] = useState<boolean>();
     const [currentPage, setCurrentPage] = useState(1);
     const [error, setError] = useState<boolean>();
-    const [dataloader, setDataLoader] = useState(false);
+    const [dataLoader, setDataLoader] = useState(false);
     const [totalPages, setTotalPages] = useState<number>(0);
     const [totalComments, setTotalComments] = useState<number>(0);
     const [totalLikes, setTotalLikes] = useState<number>(0);
@@ -181,15 +182,13 @@ const Comments: React.FC<Props> = ({}) => {
             />
             <div className={styles.comments__block}>
                 {renderComments(formatedComments)}
-                {totalPages === currentPage ? (
-                    <span>Все сообщения загружены</span>
-                ) : dataloader ? (
-                    <span>loading data...</span>
-                ) : (
-                    <button onClick={() => loadMoreHandler()}>
-                        {error ? "Ошибка" : "Загрузить еще"}
-                    </button>
-                )}
+                <LoadMore
+                    totalPages={totalPages}
+                    currentPage={currentPage}
+                    dataLoader={dataLoader}
+                    error={error}
+                    loadMoreHandler={loadMoreHandler}
+                />
             </div>
         </section>
     );

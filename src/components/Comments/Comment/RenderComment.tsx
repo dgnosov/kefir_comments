@@ -13,12 +13,12 @@ const renderComments = (
     handleLikeClick?: any,
 ) => {
     return array.map((comment: any, index: any) => (
-        <>
+        <div className={styles.comments__wrapper}>
             <Comment isChild={isChild} comment={comment} index={index} />
             {comment?.replies.length
                 ? renderComments(comment.replies, true)
                 : null}
-        </>
+        </div>
     ));
 };
 
