@@ -1,0 +1,21 @@
+@import "../../styles/colors.scss";
+
+.mainLoader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    background-color: $main_loader_bck;
+    &__loader {
+        display: flex;
+        flex-direction: column;
+        span {
+            color: $color_white;
+        }
+    }
+}

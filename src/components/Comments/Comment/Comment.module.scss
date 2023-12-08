@@ -1,23 +1,30 @@
 @import "../../../styles/colors.scss";
 
-.comments__wrapper {
-    margin: 0 0 40px 0;
-}
-
 .comment {
     display: flex;
-    margin: 0 0 27px 0;
+    margin: 0px 0 32px 0;
     font-family: Lato-Regular;
+
+    @media screen and (max-width: 1024px) {
+        margin: 0px 0 27px 0;
+    }
     &__offset {
-        margin: 0 0 27px 20px;
+        margin: 0 0 32px 34px;
+        @media screen and (max-width: 1024px) {
+            margin: 0 0 27px 20px;
+        }
     }
     &__icon {
         margin: 0 20px 0 0;
         img {
-            width: 40px;
-            height: 40px;
+            width: 68px;
+            height: 68px;
             border-radius: 50%;
             object-fit: cover;
+            @media screen and (max-width: 1024px) {
+                width: 40px;
+                height: 40px;
+            }
         }
     }
     &__container {
@@ -29,7 +36,16 @@
     &__block {
         display: flex;
         justify-content: space-between;
-        margin: 0 0 9.5px 0;
+        margin: 0 0 12.5px 0;
+        @media screen and (max-width: 1024px) {
+            margin: 0 0 9.5px 0;
+        }
+        &_info_nickname {
+            margin: 0 0 6px 0;
+            @media screen and (max-width: 1024px) {
+                margin: 0;
+            }
+        }
         &_info_created {
             span {
                 color: $color_grey;
@@ -39,7 +55,7 @@
             display: flex;
             align-items: center;
             &_icon {
-                margin: 0 8px 0 0;
+                margin: 0 4px 0 0;
                 cursor: pointer;
             }
             &_number {

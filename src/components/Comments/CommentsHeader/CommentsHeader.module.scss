@@ -1,10 +1,11 @@
 @import "../../../styles/colors.scss";
 
 .commentsHeader {
+    position: relative;
     padding: 0 0 10px 0;
     display: flex;
     justify-content: space-between;
-    margin: 0 0 24px 0;
+    margin: 0 0px 0px 0;
     color: $color_white;
     border-bottom: 0.2px solid $color_light_grey;
     &__total {

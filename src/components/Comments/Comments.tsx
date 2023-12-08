@@ -10,6 +10,7 @@ import renderComments from "./Comment/RenderComment";
 import styles from "./Comments.module.scss";
 import {atom, useAtom} from "jotai";
 import LoadMore from "src/ui/LoadMore/LoadMore";
+import MainLoader from "src/ui/MainLoader/MainLoader";
 
 // Here we will keep an id of liked comment
 export const comment_id = atom(0);
@@ -170,27 +171,30 @@ const Comments: React.FC<Props> = ({}) => {
         setCommentsRaw(newState);
     }, [commentId]);
 
-    if (isLoading) {
-        return <span>LOADING</span>;
-    }
+    // if (isLoading) {
+    //     return <MainLoader start={isLoading} />;
+    // }
 
     return (
-        <section className={styles.comments}>
-            <CommentsHeader
-                totalComments={totalComments}
-                totalLikes={totalLikes}
-            />
-            <div className={styles.comments__block}>
-                {renderComments(formatedComments)}
-                <LoadMore
-                    totalPages={totalPages}
-                    currentPage={currentPage}
-                    dataLoader={dataLoader}
-                    error={error}
-                    loadMoreHandler={loadMoreHandler}
+        <>
+            <MainLoader start={isLoading} />;
+            <section className={styles.comments}>
+                <CommentsHeader
+                    totalComments={totalComments}
+                    totalLikes={totalLikes}
                 />
-            </div>
-        </section>
+                <div className={styles.comments__block}>
+                    {renderComments(formatedComments)}
+                    <LoadMore
+                        totalPages={totalPages}
+                        currentPage={currentPage}
+                        dataLoader={dataLoader}
+                        error={error}
+                        loadMoreHandler={loadMoreHandler}
+                    />
+                </div>
+            </section>
+        </>
     );
 };
 export default Comments;

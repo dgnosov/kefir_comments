@@ -2,14 +2,18 @@
     z-index: 1;
     position: relative;
     padding: 52px 0 64px 0;
-    max-width: 562px;
+    max-width: 582px;
 
     @media screen and (max-width: 1024px) {
-        padding: 32px 24px 76px 24px;
+        padding: 32px 24px 40px 24px;
         max-width: 100%;
     }
     &__block {
+        padding: 24px 20px 0 0;
         height: 100%;
         overflow-y: auto;
+        @media screen and (max-width: 1024px) {
+            padding: 24px 0 0 0;
+        }
     }
 }

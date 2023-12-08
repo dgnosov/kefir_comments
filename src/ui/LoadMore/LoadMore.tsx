@@ -21,7 +21,7 @@ const LoadMore: React.FC<Props> = ({
         <div className={styles.loadMore}>
             {totalPages === currentPage ? (
                 <div className={styles.loadMore__all}>
-                    <span>Все сообщения загружены.</span>
+                    <span>Все комментарии загружены.</span>
                 </div>
             ) : dataLoader ? (
                 <Loader />
