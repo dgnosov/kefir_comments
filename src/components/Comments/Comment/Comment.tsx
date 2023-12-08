@@ -7,6 +7,7 @@ import {comment_id} from "../Comments";
 import {getNoun} from "src/lib/getNoun";
 import {ReactComponent as LikeStroke} from "../../../assets/icons/like_stroke.svg";
 import {ReactComponent as LikeFilled} from "../../../assets/icons/like_filled.svg";
+import placeholder from "../../../assets/img/image_placeholder.jpg";
 
 type Props = {
     comment: IComment;
@@ -50,7 +51,12 @@ const Comment: React.FC<Props> = ({comment, isChild}) => {
             ].join(" ")}
         >
             <div className={styles.comment__icon}>
-                <img src={comment.authro_icon} alt={comment.author_name} />
+                <img
+                    src={
+                        !comment.authro_icon ? placeholder : comment.authro_icon
+                    }
+                    alt={comment.author_name}
+                />
             </div>
             <div className={styles.comment__container}>
                 <div className={styles.comment__block}>
