@@ -1,11 +1,9 @@
 import React, {useEffect, useState} from "react";
 import CommentsHeader from "./CommentsHeader/CommentsHeader";
 import {useQuery} from "react-query";
-import {IAuthors, getAuthors} from "src/services/Authors";
-import {IComment, IComments, getComments} from "src/services/Comments";
+import {IAuthor, getAuthors} from "src/services/Authors";
+import {IComment, getComments} from "src/services/Comments";
 import traverseTree from "src/lib/traverseTree";
-import recursive from "./Comment/RenderComment";
-import RenderComments from "./Comment/RenderComment";
 import renderComments from "./Comment/RenderComment";
 import styles from "./Comments.module.scss";
 import {atom, useAtom} from "jotai";
@@ -25,24 +23,24 @@ const enum ErrorMessage {
 const Comments: React.FC<Props> = ({}) => {
     const [page, setPage] = useState<number>(1);
     const [successComments, setSuccessComments] = useState<boolean>();
-    const [successAuthor, setSuccessAuthor] = useState<boolean>();
+    const [successAuthors, setSuccessAuthors] = useState<boolean>();
     const [currentPage, setCurrentPage] = useState(1);
     const [error, setError] = useState<boolean>();
     const [dataLoader, setDataLoader] = useState(false);
     const [totalPages, setTotalPages] = useState<number>(0);
     const [totalComments, setTotalComments] = useState<number>(0);
     const [totalLikes, setTotalLikes] = useState<number>(0);
-    const [comments, setComments] = useState<any[]>([]);
-    const [authors, setAuthors] = useState<any[]>([]);
-    const [formatedComments, setFormatedComments] = useState<any[]>([]);
+    const [comments, setComments] = useState<IComment[]>([]);
+    const [authors, setAuthors] = useState<IAuthor[]>([]);
+    const [formatedComments, setFormatedComments] = useState<IComment[]>([]);
+    const [commentsRaw, setCommentsRaw] = useState<IComment[]>([]);
     const [commentId, setCommentId] = useAtom(comment_id);
-    const [commentsRaw, setCommentsRaw] = useState<any[]>([]);
 
     const {data: authorsData} = useQuery({
         queryFn: getAuthors,
         queryKey: ["authors"],
         onSuccess: (success) =>
-            setSuccessAuthor(
+            setSuccessAuthors(
                 ![ErrorMessage.error, ErrorMessage._404].includes(success),
             ),
     });
@@ -65,49 +63,58 @@ const Comments: React.FC<Props> = ({}) => {
         setPage((prev) => prev + 1);
     };
 
+    // Handle errors
     useEffect(() => {
         if (
             typeof successComments === "undefined" ||
-            typeof successAuthor === "undefined"
+            typeof successAuthors === "undefined"
         )
             return;
-        if (!successComments || !successAuthor) {
+        if (!successComments || !successAuthors) {
             setError(true);
             setDataLoader(false);
         } else {
             setError(false);
             setDataLoader(false);
         }
-    }, [successComments, successAuthor]);
+    }, [successComments, successAuthors]);
 
+    // If we have an error on load, we need decrement 1 from page counter
+    // to avoid pagination mistakes
     useEffect(() => {
         if (!error) return;
         setPage((prev) => prev - 1);
     }, [error]);
 
+    // refetch data to upload new comments
     useEffect(() => {
         if (page === 1) return;
         refetch();
     }, [page]);
 
+    // Upload author's data
     useEffect(() => {
         if (!authorsData) return;
         setAuthors(authorsData.data);
     }, [authorsData]);
 
+    // Upload comments
     useEffect(() => {
         if (!commentsData || !commentsData.pagination) return;
         setComments(commentsData.data);
-        // Create state with total number of pages
+        // Create state with total number of pages and current page
         setTotalPages(commentsData.pagination.total_pages);
         setCurrentPage(commentsData.pagination.page);
     }, [commentsData]);
 
-    // Описать
+    // Here we need to create a new aray with author's names
+    // and replies array.
+    // After creating an array we need to sort it
+    // TODO - ask about sort "mistake" or "not mistake"
     useEffect(() => {
         if (!comments || !authors) return;
 
-        const commentsWithAuthorsRaw = comments.map((comment: any) => {
+        const commentsWithAuthorsRaw = comments.map((comment) => {
             const author = authors.find(
                 (author) => author.id === comment.author,
             );
@@ -130,26 +137,13 @@ const Comments: React.FC<Props> = ({}) => {
         );
     }, [comments, authors]);
 
-    useEffect(() => {
-        if (!commentsRaw) return;
-        const formatedCommentsWithReplies = traverseTree(commentsRaw);
-        setFormatedComments(formatedCommentsWithReplies);
-
-        const totalComments = commentsRaw.length;
-        setTotalComments(totalComments);
-
-        const totalLikes = commentsRaw
-            .map((like) => like.likes)
-            .reduce((acc, i) => acc + i, 0);
-
-        setTotalLikes(totalLikes);
-    }, [commentsRaw]);
-
-    // Лайки - описать
+    // On click we will change flag liked true/ false
+    // and increment or dicrement it
+    // Also we need to clear comment Id, to click multiple times
     useEffect(() => {
         if (commentId === 0) return;
 
-        const newState = commentsRaw?.map((comment: any) => {
+        const newState = commentsRaw?.map((comment) => {
             if (comment.id === commentId) {
                 if (!comment.liked) {
                     return {
@@ -171,9 +165,24 @@ const Comments: React.FC<Props> = ({}) => {
         setCommentsRaw(newState);
     }, [commentId]);
 
-    // if (isLoading) {
-    //     return <MainLoader start={isLoading} />;
-    // }
+    // When array is created we need to format it and add
+    // replies array to each comment if it has.
+    // Also we need update comments and likes counter
+    // TODO - ask about whole comments and likes counter
+    useEffect(() => {
+        if (!commentsRaw) return;
+        const formatedCommentsWithReplies = traverseTree(commentsRaw);
+        setFormatedComments(formatedCommentsWithReplies);
+
+        const totalComments = commentsRaw.length;
+        setTotalComments(totalComments);
+
+        const totalLikes = commentsRaw
+            .map((like) => like.likes)
+            .reduce((acc, i) => acc + i, 0);
+
+        setTotalLikes(totalLikes);
+    }, [commentsRaw]);
 
     return (
         <>

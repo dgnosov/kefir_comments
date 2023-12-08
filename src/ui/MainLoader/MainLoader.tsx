@@ -14,14 +14,14 @@ const defaultStyle = {
     opacity: 0,
 };
 
-interface ITest {
+interface IStylesState {
     entering: {opacity: number};
     entered: {opacity: number};
     exiting: {opacity: number};
     exited: {opacity: number; display: string};
 }
 
-const transitionStyles: ITest = {
+const transitionStyles: IStylesState = {
     entering: {opacity: 1},
     entered: {opacity: 1},
     exiting: {opacity: 0},
@@ -38,7 +38,7 @@ const MainLoader: React.FC<Props> = ({start}) => {
                     ref={nodeRef}
                     style={{
                         ...defaultStyle,
-                        ...transitionStyles[state as keyof ITest],
+                        ...transitionStyles[state as keyof IStylesState],
                     }}
                 >
                     <div className={styles.mainLoader__loader}>

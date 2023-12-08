@@ -5,10 +5,6 @@
      Implemented in CSS by Tom Adey */
 
 .loader {
-    // display: flex;
-    // justify-content: center;
-    // align-items: center;
-    // transform: scale(0.5);
     &__loadingspinner {
         --square: 4px;
         --offset: 10px;

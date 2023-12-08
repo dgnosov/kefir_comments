@@ -1,19 +1,10 @@
-import React from "react";
 import styles from "./Comment.module.scss";
 import Comment from "./Comment";
+import {IComment} from "src/services/Comments";
 
-type Props = {
-    name: string;
-    isChild?: boolean;
-};
-
-const renderComments = (
-    array: any,
-    isChild?: boolean,
-    handleLikeClick?: any,
-) => {
-    return array.map((comment: any, index: any) => (
-        <div className={styles.comments__wrapper}>
+const renderComments = (array: IComment[], isChild?: boolean) => {
+    return array.map((comment: IComment, index: number) => (
+        <div key={comment.id} className={styles.comments__wrapper}>
             <Comment isChild={isChild} comment={comment} index={index} />
             {comment?.replies.length
                 ? renderComments(comment.replies, true)

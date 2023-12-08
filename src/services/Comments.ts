@@ -1,7 +1,7 @@
-import axios, {AxiosError} from "axios";
+import axios from "axios";
 
 export interface IComment {
-    replies?: IComment[] | null;
+    replies?: IComment[] | any;
     id: number;
     author: number;
     created: string;

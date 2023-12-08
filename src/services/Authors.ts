@@ -1,6 +1,6 @@
 import axios from "axios";
 
-interface IAuthor {
+export interface IAuthor {
     avatar: string;
     id: number;
     name: string;

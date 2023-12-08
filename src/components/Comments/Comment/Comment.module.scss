@@ -59,17 +59,11 @@
                 cursor: pointer;
             }
             &_number {
-                max-width: 35px;
                 display: inline-block;
                 margin: 0 0 6px 8px;
-                word-wrap: break-word;
-                text-overflow: ellipsis;
-                overflow: hidden;
-                white-space: nowrap;
             }
         }
     }
-
     &__text {
         width: 100%;
         overflow-wrap: anywhere;
