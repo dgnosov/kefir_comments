@@ -195,31 +195,27 @@ const Comments: React.FC<Props> = ({}) => {
         setTotalLikes(totalLikes);
     }, [commentsRaw]);
 
-    return (
+    return errorType?.msg === ErrorMessage._404 ? (
+        <ErrorScreen msg={errorType?.msg} />
+    ) : (
         <>
-            {errorType?.msg === ErrorMessage._404 ? (
-                <ErrorScreen msg={errorType?.msg} />
-            ) : (
-                <>
-                    <MainLoader start={isLoading} />
-                    <section className={styles.comments}>
-                        <CommentsHeader
-                            totalComments={totalComments}
-                            totalLikes={totalLikes}
-                        />
-                        <div className={styles.comments__block}>
-                            {renderComments(formatedComments)}
-                            <LoadMore
-                                totalPages={totalPages}
-                                currentPage={currentPage}
-                                dataLoader={dataLoader}
-                                error={error}
-                                loadMoreHandler={loadMoreHandler}
-                            />
-                        </div>
-                    </section>
-                </>
-            )}
+            <MainLoader start={isLoading} />
+            <section className={styles.comments}>
+                <CommentsHeader
+                    totalComments={totalComments}
+                    totalLikes={totalLikes}
+                />
+                <div className={styles.comments__block}>
+                    {renderComments(formatedComments)}
+                    <LoadMore
+                        totalPages={totalPages}
+                        currentPage={currentPage}
+                        dataLoader={dataLoader}
+                        error={error}
+                        loadMoreHandler={loadMoreHandler}
+                    />
+                </div>
+            </section>
         </>
     );
 };
